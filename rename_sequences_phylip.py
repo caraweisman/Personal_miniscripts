@@ -17,6 +17,7 @@ numseqs = int(re.split('\s+', infile[0])[0])
 
 outfile = open(infilename + '_renamed', 'w')
 
+outfile.write(infile[0] + '\n') # print first line to output since skipped later 
 
 if numseqs != len(seqnames): 
 	print ' Warning: Number of names in file does not match number of sequences in alignment'
@@ -25,7 +26,7 @@ namecount = 0
 for i in range(1, len(infile)): 
 	if ' ' in infile[i]: # identifies lines with sequence names by containing white space
         	newname = seqnames[namecount]
-        	newnametouse = re.split('from', newname)[1][1:] # modifying slightly for my weird case; if name in sequence new name file isn't exactly what you want
+        	newnametouse = re.split('from', newname)[1][1:].replace('[', '').replace(']','').replace(',','').replace(' ', '')[0:10] # modifying slightly for my weird case; if name in sequence new name file isn't exactly what you want
 		namepart = re.split('\s+', infile[i])[0] # find part before white space, ie sequence name 
 		newline = infile[i].replace(namepart, newnametouse)
 		outfile.write(newline + '\n')
