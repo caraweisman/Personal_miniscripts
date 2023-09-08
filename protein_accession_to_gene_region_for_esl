@@ -1,0 +1,37 @@
+## this takes a list of refseq protein accessions (NP.XXX) 
+## and the gff for the species, sub-parsed (via grep etc) into just the cds entries and just the 'gene' ie gene region entries
+## and outputs, for each protein, the name, contig, and coordinates
+## this can be passed into eg esl-sfetch to get the coresponding sequence from a genomic fasta
+
+
+import numpy as np 
+import re
+
+protein_list = np.genfromtxt('lsg2s_yak_ere_list', dtype=str, delimiter='\t') # list of NP.XXX refseq accession protein ids
+
+cds_gff = np.genfromtxt('GCF_000001215.4_Release_6_plus_ISO1_MT_genomic.gff_CDSONLY', dtype=str, delimiter='\t') # gff for the genome, with only cds entries (via grep) 
+
+gene_gff = np.genfromtxt('GCF_000001215.4_Release_6_plus_ISO1_MT_genomic.gff_GENEONLY', dtype=str, delimiter='\t') # gff for the genome, with only gene entries (via grep) 
+
+
+
+# first, find the gene ID from the gff and pull out its contig name and coordinates
+
+for i in range(0, len(protein_list)): 
+	protein = protein_list[i]
+	for j in range(0, len(cds_gff)): 
+		info = cds_gff[j][8]
+		npid = re.split(';', info)[0][7:]
+		if protein == npid:
+			geneid_part = re.split(',',info)[1]
+			geneid = re.split(':', geneid_part)[1]
+			#print(protein, geneid)
+	for j in range(0, len(gene_gff)): 
+		gene_dbxref = re.split(';', gene_gff[j][8])[1]
+		gene_geneid_part = re.split(',', gene_dbxref)[1]
+		gene_geneid = re.split(':', gene_geneid_part)[1]
+		if gene_geneid == geneid:
+			contig = gene_gff[j][0]
+			start = gene_gff[j][3]
+			end = gene_gff[j][4]
+			print(protein + '_generegion', '\t',  start,'\t',  end, '\t', contig)
