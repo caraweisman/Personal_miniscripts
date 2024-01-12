@@ -20,7 +20,7 @@ os.system(blastdbcmd)
 
 print('made blast db')
 
-blastcmd = ' blastx -db ' + reference_genome_path + ' -query ' + in_seq + ' -evalue 0.001 -outfmt="6 sseqid slen sstart send qstart qend evalue qlen" | sort -k5 -n >> ' + blast_outfile_name
+blastcmd = ' blastx -db ' + reference_genome_path + ' -query ' + in_seq + ' -evalue 0.001 -outfmt="6 sseqid slen sstart send qstart qend evalue qlen" | sort -k5 -n > ' + blast_outfile_name
 os.system(blastcmd) 
 
 print('performed blast')
